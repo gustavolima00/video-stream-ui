@@ -1,84 +1,102 @@
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
+import { VideoDetails, sampleVideoDetails } from "../models/VideoDetails";
+import { Spinner, Button, Container, Row, Col, Card } from "react-bootstrap";
 
 function VideoPlayerPage() {
-  const [subtitles, setSubtitles] = useState<any[]>([]);
-  const [streams, setStreams] = useState<any[]>([]);
-  const [selectedLanguage, setSeletedLanguage] = useState<string>("");
+  const [videoDetails, setVideoDetails] = useState<VideoDetails>();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [videoSource, setVideoSource] = useState<string>();
+
   const { id } = useParams();
 
+  const fetchVideoDetails = async (id: string | undefined) => {
+    if (id === undefined) {
+      throw new Error("Id is undefined");
+    }
+    console.log("id", id);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return sampleVideoDetails;
+  };
+
   useEffect(() => {
-    setStreams([
-      {
-        default: true,
-        label: "Ingles",
-        language: "en",
-        link: "http://localhost:5000/get-file?file_path=968565e6-61f6-45c6-ab68-963eb2c04428%2fconverted_videos%2ftbbt_01_und.mp4",
-      },
-      {
-        default: false,
-        label: "Portugues",
-        language: "pt",
-        link: "http://localhost:5000/get-file?file_path=968565e6-61f6-45c6-ab68-963eb2c04428%2fconverted_videos%2ftbbt_01_pt.mp4",
-      },
-    ]);
+    fetchVideoDetails(id)
+      .then((videoDetails) => {
+        setVideoDetails(videoDetails);
+        if (videoDetails?.videoStreams?.length > 0) {
+          setVideoSource(videoDetails.videoStreams[0].url);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, [id]);
 
-    setSubtitles([
-      {
-        kind: "subtitles",
-        label: "Portugues",
-        srcLang: "pt",
-        src: "http://localhost:5000/get-file?file_path=968565e6-61f6-45c6-ab68-963eb2c04428%2fconverted_videos%2ftbbt_01_pt.vtt",
-      },
-    ]);
-
-    setSeletedLanguage("en");
-  });
-
-  function getVideoUrl() {
-    const stream = streams.find(
-      (stream) => stream.language === selectedLanguage
-    );
-    return stream?.link;
-  }
+  const changeVideoSource = (url: string) => {
+    setVideoSource(url);
+  };
 
   return (
-    <div className="App">
-      <h1> Video player: {id}</h1>
-      <button
-        onClick={() => {
-          setSeletedLanguage("en");
-        }}
-      >
-        {" "}
-        Ingles
-      </button>
+    <Container className="my-4">
+      {loading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : (
+        <div>
+          {error && <div>{error}</div>}
+          {videoDetails && (
+            <div>
+              <Card className="text-center mb-4">
+                <Card.Header>{videoDetails.title}</Card.Header>
+                <Card.Body>
+                  <Card.Title>{videoDetails.description}</Card.Title>
+                </Card.Body>
+              </Card>
 
-      <button
-        onClick={() => {
-          setSeletedLanguage("pt");
-        }}
-      >
-        {" "}
-        Portugues
-      </button>
+              <Row>
+                <Col>
+                  {videoDetails.videoStreams.map((video, index) => (
+                    <Button
+                      key={index}
+                      variant="primary"
+                      onClick={() => changeVideoSource(video.url)}
+                      className="me-2 mb-2"
+                    >
+                      {video.name}
+                    </Button>
+                  ))}
+                </Col>
+              </Row>
 
-      <ReactPlayer
-        config={{
-          file: {
-            attributes: {
-              crossOrigin: "true",
-            },
-            tracks: [...subtitles],
-          },
-        }}
-        url={getVideoUrl()}
-        controls={true}
-        width={900}
-        height={"auto"}
-      />
-    </div>
+              <ReactPlayer
+                config={{
+                  file: {
+                    attributes: {
+                      crossOrigin: "true",
+                    },
+                    tracks: videoDetails.subtitleStreams.map((subtitle) => ({
+                      kind: "subtitle",
+                      label: subtitle.name,
+                      srcLang: subtitle.language,
+                      src: subtitle.url,
+                    })),
+                  },
+                }}
+                url={videoSource}
+                controls={true}
+                width={"100%"}
+                height={"auto"}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </Container>
   );
 }
 
