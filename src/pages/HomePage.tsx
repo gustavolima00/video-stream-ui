@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { Card, Button, Form, Container, Row, Col, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { sampleMediaList, Media } from "../models/Media";
+import { sampleTitleList, Title } from "../models/Title";
 
 function HomePage() {
-  const [medias, setMedias] = useState<Media[]>([]);
+  const [titles, setTitles] = useState<Title[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const fetchMedias = async () => {
+  const fetchTitles = async () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    return sampleMediaList;
+    return sampleTitleList;
   };
 
   useEffect(() => {
-    fetchMedias()
-      .then((medias) => {
-        setMedias(medias);
+    fetchTitles()
+      .then((titles) => {
+        setTitles(titles);
         setLoading(false);
       })
       .catch((error) => {
@@ -45,16 +45,16 @@ function HomePage() {
                 </Form.Group>
               </Form>
               <Row>
-                {medias.map((media) => (
-                  <Col sm={12} md={6} lg={4} key={media.id}>
+                {titles.map((title) => (
+                  <Col sm={12} md={6} lg={4} key={title.id}>
                     <Card className="mb-4">
-                      {media.image && (
-                        <Card.Img variant="top" src={media.image} />
+                      {title.image && (
+                        <Card.Img variant="top" src={title.image} />
                       )}
                       <Card.Body>
-                        <Card.Title>{media.title}</Card.Title>
-                        <Card.Text>{media.description}</Card.Text>
-                        <Link to={`/details/${media.id}`}>
+                        <Card.Title>{title.title}</Card.Title>
+                        <Card.Text>{title.description}</Card.Text>
+                        <Link to={`/details/${title.id}`}>
                           <Button variant="primary">Watch</Button>
                         </Link>
                       </Card.Body>

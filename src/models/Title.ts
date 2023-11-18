@@ -1,4 +1,4 @@
-export interface Media {
+export interface Title {
   id: number;
   title: string;
   description: string;
@@ -6,7 +6,7 @@ export interface Media {
   image?: string;
 }
 
-export const sampleMediaList: Media[] = [
+export const sampleTitleList: Title[] = [
   {
     id: 1,
     title: "The Big Bang Theory",
