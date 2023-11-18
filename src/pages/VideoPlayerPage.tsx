@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function VideoPlayerPage() {
   const [subtitles, setSubtitles] = useState<any[]>([]);
   const [streams, setStreams] = useState<any[]>([]);
   const [selectedLanguage, setSeletedLanguage] = useState<string>("");
+  const { id } = useParams();
 
   useEffect(() => {
     setStreams([
@@ -44,7 +45,7 @@ function VideoPlayerPage() {
 
   return (
     <div className="App">
-      <Link to="/">Go back to Home</Link>
+      <h1> Video player: {id}</h1>
       <button
         onClick={() => {
           setSeletedLanguage("en");
@@ -74,7 +75,7 @@ function VideoPlayerPage() {
         }}
         url={getVideoUrl()}
         controls={true}
-        width={"100%"}
+        width={900}
         height={"auto"}
       />
     </div>
