@@ -3,7 +3,7 @@ import { Card, Button, Form, Container, Row, Col, Spinner } from "react-bootstra
 import { Link } from "react-router-dom";
 import { sampleTitleList, Title } from "../models/Title";
 
-function HomePage() {
+function TitlesPage() {
   const [titles, setTitles] = useState<Title[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -70,4 +70,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default TitlesPage;
