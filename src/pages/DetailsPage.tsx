@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, Button, Form, Container, Row, Col, Spinner } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import { MediaDetails, sampleMediaList } from "../models/MediaDetails";
+import { fetchMedias } from "../services/video_stream_api_service";
 
 function DetailsPage() {
   const [medias, setMedias] = useState<MediaDetails[]>([]);
@@ -10,16 +11,13 @@ function DetailsPage() {
 
   const { id } = useParams();
 
-  const fetchMedias = async (id: string | undefined) => {
-    if (id === undefined) {
-      throw new Error("Id is undefined");
-    }
-    console.log("id", id);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return sampleMediaList;
-  };
-
   useEffect(() => {
+    if(id === undefined){
+      setError("Id não informado");
+      setLoading(false);
+      return;
+    }
+
     fetchMedias(id)
       .then((medias) => {
         setMedias(medias);

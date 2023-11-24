@@ -2,16 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, Button, Form, Container, Row, Col, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { sampleTitleList, Title } from "../models/Title";
+import { fetchTitles } from "../services/video_stream_api_service";
 
 function TitlesPage() {
   const [titles, setTitles] = useState<Title[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-
-  const fetchTitles = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return sampleTitleList;
-  };
 
   useEffect(() => {
     fetchTitles()
@@ -23,7 +19,7 @@ function TitlesPage() {
         setError(error.message);
         setLoading(false);
       });
-  });
+  }, []);
 
   return (
     <Container>
